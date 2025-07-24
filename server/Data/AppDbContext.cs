@@ -10,9 +10,9 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder
-          .UseSqlServer(_configuration.GetConnectionString("defaultConnection"));
+       optionsBuilder.UseMySql("server=localhost;database=videogamesdb_2;user=root;password=;", ServerVersion.AutoDetect("server=localhost;database=videogamesdb_2;user=root;password=;"));
+
     }
 
-    public DbSet<Game> Game { get; set; }
+    public DbSet<Game> Games { get; set; }
 }
