@@ -1,5 +1,6 @@
-
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class GameService : IGameService
 {
@@ -12,27 +13,38 @@ public class GameService : IGameService
 
     public async Task<List<Game>> GetDataAsync()
     {
-        var games = await _db.Games.ToListAsync();
+        return await _db.Games.ToListAsync();
+    }
+
+    public async Task<Game?> GetDataByIdAsync(int id)
+    {
+        return await _db.Games.FindAsync(id);
+    }
+
+    public async Task<Game> CreateAsync(Game games)
+    {
+        _db.Games.Add(games);
+        await _db.SaveChangesAsync();
         return games;
     }
 
-    public Task<Game> GetDataByIdAsync(int id)
+    public async Task<Game?> UpdateAsync(int id, Game games)
     {
-        throw new NotImplementedException();
+        var existingGame = await _db.Games.FindAsync(id);
+        if (existingGame == null) return null;
+
+        existingGame.Name = games.Name;
+        await _db.SaveChangesAsync();
+        return existingGame;
     }
 
-    public Task<List<Game>> CreateAsync()
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
-    }
+        var games = await _db.Games.FindAsync(id);
+        if (games == null) return false;
 
-    public Task<List<Game>> DeleteAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<Game>> UpdateAsync()
-    {
-        throw new NotImplementedException();
+        _db.Games.Remove(games);
+        await _db.SaveChangesAsync();
+        return true;
     }
 }
