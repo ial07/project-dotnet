@@ -14,4 +14,4 @@
 # Tugas 1
 
 - hubungkan project server dengan database yang dipunya, kemudian tampilkan datanya pada API Swagger
-- setelah berhasil push code ke branch azki
+- setelah berhasil menampilkandatanya di swagger kemudian push code ke branch azki
