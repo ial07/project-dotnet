@@ -1,0 +1,107 @@
+@page "/games-a"
+@inject IGameClientService GameClientService
+
+@if (games == null)
+{
+    <p><em>No Games</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in games)
+            {
+                <tr>
+                    <td>@game.Id</td>
+                    <td>@game.Name</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => Edit(game)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(game.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h3>@(isEdit ? "Edit Game" : "Add Game")</h3>
+
+<EditForm Model="@gameModel" OnValidSubmit="@HandleSubmit">
+    <InputText @bind-Value="gameModel.Name" class="form-control" placeholder="Game Name" />
+    <ValidationMessage For="@(() => gameModel.Name)" />
+    <br />
+    <button type="submit" class="btn btn-primary">@((isEdit ? "Update" : "Create"))</button>
+    @if (isEdit)
+    {
+        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    }
+</EditForm>
+
+@code {
+    private List<Game>? games;
+    private Game gameModel = new();
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+  private async Task LoadData()
+{
+    try
+    {
+        games = await GameClientService.GetDataAsync();
+        Console.WriteLine($"Loaded {games?.Count ?? 0} games.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+    }
+}
+
+    private void Edit(Game game)
+    {
+        gameModel = new Game
+        {
+            Id = game.Id,
+            Name = game.Name
+        };
+        isEdit = true;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (isEdit)
+        {
+           await GameClientService.UpdateAsync(gameModel.Id, gameModel);
+        }
+        else
+        {
+            await GameClientService.CreateAsync(gameModel);
+        }
+
+        gameModel = new();
+        isEdit = false;
+        await LoadData();
+    }
+
+    private async Task Delete(int id)
+    {
+        await GameClientService.DeleteAsync(id);
+        await LoadData();
+    }
+
+    private void CancelEdit()
+    {
+        gameModel = new();
+        isEdit = false;
+    }
+}
