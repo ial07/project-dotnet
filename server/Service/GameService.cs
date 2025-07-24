@@ -12,7 +12,7 @@ public class GameService : IGameService
 
     public async Task<List<Game>> GetDataAsync()
     {
-        var games = await _db.Game.ToListAsync();
+        var games = await _db.Games.ToListAsync();
         return games;
     }
 

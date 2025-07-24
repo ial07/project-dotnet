@@ -2,17 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameControllerBase : ControllerBase
-{
-    protected readonly IConfiguration _config;
-    protected readonly GameService _gameService;
+public class GameController : ControllerBase
+ {
+        private readonly IConfiguration _config;
+        private readonly IGameService _gameService;
 
-    protected GameControllerBase(IConfiguration config, GameService gameService)
-    {
-        _config = config;
-        _gameService = gameService;
-    }
-
+        public GameController(IConfiguration config, IGameService gameService)
+        {
+            _config = config;
+            _gameService = gameService;
+        }
 
     [HttpGet("GetData")]
     public async Task<IActionResult> GetDataAsync()
