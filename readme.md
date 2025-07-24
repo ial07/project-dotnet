@@ -15,3 +15,7 @@
 
 - hubungkan project server dengan database yang dipunya, kemudian tampilkan datanya pada API Swagger
 - setelah berhasil menampilkandatanya di swagger kemudian push code ke branch azki
+
+# Tugas 2
+
+- Implemntasikan CRUD di API pada Server => Service
