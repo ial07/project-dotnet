@@ -19,3 +19,8 @@
 # Tugas 2
 
 - Implemntasikan CRUD di API pada Server => Service
+
+# Tugas 3
+
+- Lengkapi CRUD pada Client => Service
+- Implementasi CRUD pada Pages => Game.razor
