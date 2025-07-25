@@ -1,10 +1,24 @@
 using Microsoft.EntityFrameworkCore;
-//using server.Data; // Ganti dengan namespace AppDbContext kamu
-//using server.Service; // Ganti dengan namespace GameService dan IGameService kamu
+// using server.Data; // Pastikan namespace AppDbContext sudah sesuai
+// using server.Service; // Pastikan namespace GameService dan IGameService sesuai
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Tambahkan policy CORS
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5090") // alamat Blazor WebAssembly client kamu
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+// Tambahkan layanan ke container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -17,7 +31,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-// ✅ Tambahkan DI untuk GameService
+// Tambahkan dependency injection untuk GameService
 builder.Services.AddScoped<IGameService, GameService>();
 
 var app = builder.Build();
@@ -30,6 +44,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Aktifkan CORS di sini, sebelum Authorization dan MapControllers
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

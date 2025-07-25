@@ -6,10 +6,12 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// HttpClient untuk API
-builder.Services.AddScoped(sp => new HttpClient 
-{ 
-    BaseAddress = new Uri("https://localhost:5001/") // Sesuaikan dengan alamat API server kamu
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("http://localhost:5128")
 });
+
+// Daftarkan GameService
+builder.Services.AddScoped<IGameClientService, GameClientService>();
 
 await builder.Build().RunAsync();

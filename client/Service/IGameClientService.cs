@@ -4,7 +4,7 @@ public interface IGameClientService
 {
     Task<List<Game>> GetDataAsync();
     Task<Game> GetDataByIdAsync(int id);
-    Task<List<Game>> CreateAsync();
-    Task<List<Game>> UpdateAsync();
-    Task<List<Game>> DeleteAsync();
+    Task<Game> CreateAsync(Game games);
+    Task<Game> UpdateAsync(int id, Game game);
+    Task<bool> DeleteAsync(int id);
 }
