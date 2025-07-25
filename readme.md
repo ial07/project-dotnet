@@ -24,3 +24,8 @@
 
 - Lengkapi CRUD pada Client => Service
 - Implementasi CRUD pada Pages => Game.razor
+
+# Tugas 4
+
+- Buatkan Fungsi Crud dari [Server] sampai [Client] dengan mengimplemntasi dari file Models => Player.cs
+- Hubungkan Tabel Player dengan Game dengan Schema 1 Player bisa mempunyai banyak Game (One to Many)
