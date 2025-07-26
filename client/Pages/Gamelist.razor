@@ -1,5 +1,6 @@
 @page "/games-a"
 @inject IGameClientService GameClientService
+@inject IPlayerClientService PlayerClientService
 
 @if (games == null)
 {
@@ -11,6 +12,7 @@ else
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Nama Player</th>
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
@@ -20,6 +22,7 @@ else
             {
                 <tr>
                     <td>@game.Id</td>
+                    <td>@game.Player.UserName</td>
                     <td>@game.Name</td>
                     <td>
                         <button class="btn btn-warning" @onclick="() => Edit(game)">Edit</button>
@@ -34,7 +37,17 @@ else
 <h3>@(isEdit ? "Edit Game" : "Add Game")</h3>
 
 <EditForm Model="@gameModel" OnValidSubmit="@HandleSubmit">
-    <InputText @bind-Value="gameModel.Name" class="form-control" placeholder="Game Name" />
+
+    <InputSelect @bind-value="gameModel.playerid" class="form-control">
+        <option value="">-- Pilih Player --</option>
+        @foreach (var player in players)
+        {
+            <option value="@player.PlayerID">@player.UserName</option>
+        }
+    </InputSelect>
+    <ValidationMessage For="@(() => gameModel.playerid)" />
+
+    <InputText @bind-value="gameModel.Name" class="form-control" placeholder="Game Name" />
     <ValidationMessage For="@(() => gameModel.Name)" />
     <br />
     <button type="submit" class="btn btn-primary">@((isEdit ? "Update" : "Create"))</button>
@@ -46,12 +59,14 @@ else
 
 @code {
     private List<Game>? games;
+    private List<Player>? players = new();
     private Game gameModel = new();
     private bool isEdit = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
+        
     }
 
   private async Task LoadData()
@@ -59,6 +74,8 @@ else
     try
     {
         games = await GameClientService.GetDataAsync();
+        players = await PlayerClientService.GetDataAsync();
+
         Console.WriteLine($"Loaded {games?.Count ?? 0} games.");
     }
     catch (Exception ex)

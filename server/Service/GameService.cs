@@ -13,7 +13,11 @@ public class GameService : IGameService
 
     public async Task<List<Game>> GetDataAsync()
     {
-        return await _db.Games.ToListAsync();
+       // return await _db.Games.ToListAsync();
+         return await _db.Games
+                    .Include(g => g.Player) // JOIN ke tabel Player
+                    .ToListAsync(); 
+
     }
 
     public async Task<Game?> GetDataByIdAsync(int id)

@@ -18,6 +18,13 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+    {
+        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
+
 // Tambahkan layanan ke container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

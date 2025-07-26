@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-    public AppDbContext(DbContextOptions options, IConfiguration configuration) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<Player> Players => Set<Player>();
+    public DbSet<Game> Games => Set<Game>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        _configuration = configuration;
+        modelBuilder.Entity<Player>()
+            .HasMany(p => p.Games)
+            .WithOne(g => g.Player!)
+            .HasForeignKey(g => g.playerid)
+            .OnDelete(DeleteBehavior.Cascade);
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-       optionsBuilder.UseMySql("server=localhost;database=videogamesdb_2;user=root;password=;", ServerVersion.AutoDetect("server=localhost;database=videogamesdb_2;user=root;password=;"));
-
-    }
-
-    public DbSet<Game> Games { get; set; }
 }

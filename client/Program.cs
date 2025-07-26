@@ -13,5 +13,9 @@ builder.Services.AddScoped(sp => new HttpClient
 
 // Daftarkan GameService
 builder.Services.AddScoped<IGameClientService, GameClientService>();
+builder.Services.AddScoped<IPlayerClientService, PlayerClientService>();
+
+
+
 
 await builder.Build().RunAsync();

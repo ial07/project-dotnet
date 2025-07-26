@@ -1,0 +1,121 @@
+@page "/players"
+@inject IPlayerClientService PlayerClientService
+
+<h3>Player List</h3>
+
+@if (players == null)
+{
+    <p><em>No Players Available</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>PlayerID</th>
+                <th>UserName</th>
+                <th>Address</th>
+                <th>PhoneNumber</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in players)
+            {
+                <tr>
+                    <td>@player.PlayerID</td>
+                    <td>@player.UserName</td>
+                    <td>@player.Address</td>
+                    <td>@player.PhoneNumber</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => Edit(player)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(player.PlayerID)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h4>@(isEdit ? "Edit Player" : "Add Player")</h4>
+
+<EditForm Model="@playerModel" OnValidSubmit="@HandleSubmit">
+    <InputText @bind-Value="playerModel.UserName" class="form-control" placeholder="UserName" />
+    <ValidationMessage For="@(() => playerModel.UserName)" />
+    <br />
+    <InputText @bind-Value="playerModel.Address" class="form-control" placeholder="Address" />
+    <ValidationMessage For="@(() => playerModel.Address)" />
+    <br />
+    <InputNumber @bind-Value="playerModel.PhoneNumber" class="form-control" placeholder="Phone Number" />
+    <ValidationMessage For="@(() => playerModel.PhoneNumber)" />
+    <br />
+    <button type="submit" class="btn btn-primary">@((isEdit ? "Update" : "Create"))</button>
+    @if (isEdit)
+    {
+        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    }
+</EditForm>
+
+@code {
+    private List<Player>? players;
+    private Player playerModel = new();
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPlayers();
+    }
+
+    private async Task LoadPlayers()
+    {
+        try
+        {
+              players = await PlayerClientService.GetDataAsync();
+;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load players: {ex.Message}");
+        }
+    }
+
+    private void Edit(Player player)
+    {
+        playerModel = new Player
+        {
+            PlayerID = player.PlayerID,
+            UserName = player.UserName,
+            Address = player.Address,
+            PhoneNumber = player.PhoneNumber
+        };
+        isEdit = true;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (isEdit)
+        {
+            await PlayerClientService.UpdateAsync(playerModel.PlayerID, playerModel);
+        }
+        else
+        {
+            await PlayerClientService.CreateAsync(playerModel);
+        }
+
+        playerModel = new();
+        isEdit = false;
+        await LoadPlayers();
+    }
+
+    private async Task Delete(int id)
+    {
+        await PlayerClientService.DeleteAsync(id);
+        await LoadPlayers();
+    }
+
+    private void CancelEdit()
+    {
+        playerModel = new();
+        isEdit = false;
+    }
+}
